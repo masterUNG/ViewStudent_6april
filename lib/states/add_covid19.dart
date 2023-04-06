@@ -25,357 +25,252 @@ class add_datacovid19 extends StatefulWidget {
 }
 
 class _adddatacovid19State extends State<add_datacovid19> {
-    String? name, id, date;
+  String? name, id, date;
 
   TextEditingController nameController = TextEditingController();
   TextEditingController idController = TextEditingController();
   TextEditingController dateController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-  return Scaffold(
+    return Scaffold(
       appBar: AppBar(
         title: ShowText(
           text: 'เพิ่มรายชื่อคนติดโควิด',
           textStyle: Myconstant().h2whiteStyle(),
         ),
       ),
-      
-  
-          floatingActionButton:FloatingActionButton.extended(  
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
-              if ((name?.isEmpty ?? true) ||
-                                  (id?.isEmpty ?? true) ||
-                                  (date?.isEmpty ?? true)) {
-                                MyDialog(context: context).normalDialog(
-                                    title: 'มีพื้นที่ว่าง ?',
-                                    subTitle: 'กรุณาเติมทุกช่องว่าง');
-                              } else {
-                                CovidModel covidModel = CovidModel(
-                                    name: name!, id: id!, date: date!);
-                                await FirebaseFirestore.instance
-                                    .collection('covid')
-                                    .doc()
-                                    .set(covidModel.toMap())
-                                    .then((value) {
-                                  nameController.text = '';
-                                  idController.text = '';
-                                  dateController.text = '';
-                                });
-                                Navigator.pop(context);
-                              }
-        },  
-        icon: Icon(Icons.save),  
-        label: Text("Save"),  
-        
+          if ((name?.isEmpty ?? true) ||
+              (id?.isEmpty ?? true) ||
+              (dateController.text.isEmpty)) {
+            MyDialog(context: context).normalDialog(
+                title: 'มีพื้นที่ว่าง ?', subTitle: 'กรุณาเติมทุกช่องว่าง');
+          } else {
+            CovidModel covidModel =
+                CovidModel(name: name!, id: id!, date: dateController.text);
+            await FirebaseFirestore.instance
+                .collection('covid')
+                .doc()
+                .set(covidModel.toMap())
+                .then((value) {
+              nameController.text = '';
+              idController.text = '';
+              dateController.text = '';
+            });
+            Navigator.pop(context);
+          }
+        },
+        icon: Icon(Icons.save),
+        label: Text("Save"),
+      ),
+      body: Center(
+        child: Stack(
+          children: [
+            Column(
+              children: [
+                // ShowText(
 
-        
-      ), 
+                //   text: 'เพิ่มรายชื่อคนติดโควิด',
 
-      
-body: 
+                //   textStyle: Myconstant().h2Style(),
 
-Center(
-  child:   Stack(
-  
-    
-  
+                // ),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-  
-                    
-  
-                    Column(
-  
-                      
-  
-                      children: [
-  
-                        
-  
-                        
-  
-                        
-  
-                        // ShowText(
-  
-                        //   text: 'เพิ่มรายชื่อคนติดโควิด',
-  
-                        //   textStyle: Myconstant().h2Style(),
-  
-                        // ),
-  
-                        Row(
-  
-                          mainAxisAlignment: MainAxisAlignment.center,
-  
-                          children: [
-  
-                            ShowIconButton(iconData: Icons.person, pressFunc: () {
-  
-                              
-  
-                            },),
-  
-                            ShowForm(
-  
-                              hint: 'Name : ',
-  
-                              changeFunc: (p0) {
-  
-                                name = p0.trim();
-  
-                              },
-  
-                              textEditingController: nameController,
-  
-                            ),
-  
-                          ],
-  
-                        ),
-  
-                        Row(
-  
-                          mainAxisAlignment:MainAxisAlignment.center ,
-  
-                          children: [
-  
-                            ShowIconButton(iconData: Icons.fingerprint_outlined, pressFunc: () {
-  
-                              
-  
-                            },),
-  
-                            ShowForm(
-  
-                              hint: 'id : ',
-  
-                              changeFunc: (p0) {
-  
-                                id = p0.trim();
-  
-                              },
-  
-                              textEditingController: idController,
-  
-                            ),
-  
-                          ],
-  
-                        ),
-  
-                        Row(mainAxisAlignment:MainAxisAlignment.center ,
-  
-                          children: [
-  
-                               ShowIconButton(
-  
-                              iconData: Icons.calendar_today_rounded,
-  
-                              pressFunc: () async{
-  
-                                  DateTime? pickeddate = await showDatePicker(
-  
-                              context: context,
-  
-                              initialDate: DateTime.now(),
-  
-                              firstDate: DateTime(2000),
-  
-                              lastDate: DateTime(2101),
-  
-                            );
-  
-                            if (pickeddate != null) {
-  
-                              String formattedDate=  DateFormat('yyyy-MM-dd').format(pickeddate);
-  
-                             
-  
-                              setState(() {
-  
-                                
-  
-                              dateController.text = formattedDate.toString();
-  
-                              });
-  
-                              } else {
-  
-                                print('flail');
-  
-                            }
-  
-                              },
-  
-                            ),
-  
-                            
-  
-                            ShowForm(
-  
-                              //iconData: Icons.calendar_today_rounded,
-  
-  
-  
-                              hint: 'Date : ',
-  
-                              changeFunc: (p0) async {
-  
-                                date = dateController.text;
-  
-                              },
-  
-                              textEditingController: dateController,
-  
-                            ),
-  
-                         
-  
-                          ],
-  
-                        ),
-  
-                        Row(
-  
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  
-                          children: [
-  
-                            // ShowButton(
-  
-                            //   lable: 'บันทึก',
-  
-                            //   pressFunc: () async {
-  
-                            //     if ((name?.isEmpty ?? true) ||
-  
-                            //         (id?.isEmpty ?? true) ||
-  
-                            //         (date?.isEmpty ?? true)) {
-  
-                            //       MyDialog(context: context).normalDialog(
-  
-                            //           title: 'มีพื้นที่ว่าง ?',
-  
-                            //           subTitle: 'กรุณาเติมทุกช่องว่าง');
-  
-                            //     } else {
-  
-                            //       CovidModel covidModel = CovidModel(
-  
-                            //           name: name!, id: id!, date: date!);
-  
-                            //       await FirebaseFirestore.instance
-  
-                            //           .collection('covid')
-  
-                            //           .doc()
-  
-                            //           .set(covidModel.toMap())
-  
-                            //           .then((value) {
-  
-                            //         nameController.text = '';
-  
-                            //         idController.text = '';
-  
-                            //         dateController.text = '';
-  
-                            //       });
-  
-                            //     }
-  
-                            //   },
-  
-                            // ),
-  
-                            
-  
-                            // ShowButton(
-  
-                            //   lable: 'อัพเดท',
-  
-                            //   pressFunc: () async {
-  
-                            //     if ((nameController.text.isEmpty) ||
-  
-                            //         (idController.text.isEmpty) ||
-  
-                            //         (dateController.text.isEmpty)) {
-  
-                            //       MyDialog(context: context).normalDialog(
-  
-                            //           title: 'มีพื้นที่ว่าง ?',
-  
-                            //           subTitle: 'กรุณาเติมทุกช่องว่าง');
-  
-                            //     } else {
-  
-                            //       var appController;
-  
-                            //       String docId = appController.docIdCovids[
-  
-                            //           appController.indexUpdates.last];
-  
-                            //       print('docId Updata---> $docId');
-  
-  
-  
-                            //       CovidModel covidModel = CovidModel(
-  
-                            //           name: nameController.text,
-  
-                            //           id: idController.text,
-  
-                            //           date: dateController.text);
-  
-                            //       print(
-  
-                            //           'covidModel Update ---> ${covidModel.toMap()}');
-  
-  
-  
-                            //       await FirebaseFirestore.instance
-  
-                            //           .collection('covid')
-  
-                            //           .doc(docId)
-  
-                            //           .update(covidModel.toMap())
-  
-                            //           .then((value) {
-  
-                            //         nameController.text = '';
-  
-                            //         idController.text = '';
-  
-                            //         dateController.text = '';
-  
-                            //       });
-  
-                            //     }
-  
-                            //   },
-  
-                            // ),
-  
-                          ],
-  
-                        )
-  
-                      ],
-  
+                    ShowIconButton(
+                      iconData: Icons.person,
+                      pressFunc: () {},
                     ),
-  
-                    
-  
-                  
-  
+                    ShowForm(
+                      hint: 'Name : ',
+                      changeFunc: (p0) {
+                        name = p0.trim();
+                      },
+                      textEditingController: nameController,
+                    ),
                   ],
-  
                 ),
-),
-    
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ShowIconButton(
+                      iconData: Icons.fingerprint_outlined,
+                      pressFunc: () {},
+                    ),
+                    ShowForm(
+                      hint: 'id : ',
+                      changeFunc: (p0) {
+                        id = p0.trim();
+                      },
+                      textEditingController: idController,
+                    ),
+                  ],
+                ),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ShowIconButton(
+                      iconData: Icons.calendar_today_rounded,
+                      pressFunc: () async {
+                        DateTime? pickeddate = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime(2000),
+                          lastDate: DateTime(2101),
+                        );
+
+                        if (pickeddate != null) {
+                          String formattedDate =
+                              DateFormat('yyyy-MM-dd').format(pickeddate);
+
+                          setState(() {
+                            dateController.text = formattedDate.toString();
+                          });
+                        } else {
+                          print('flail');
+                        }
+                      },
+                    ),
+                    ShowForm(
+                      //iconData: Icons.calendar_today_rounded,
+
+                      hint: 'Date : ',
+
+                      changeFunc: (p0) async {
+                        date = dateController.text;
+                      },
+
+                      textEditingController: dateController,
+                    ),
+                  ],
+                ),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // ShowButton(
+
+                    //   lable: 'บันทึก',
+
+                    //   pressFunc: () async {
+
+                    //     if ((name?.isEmpty ?? true) ||
+
+                    //         (id?.isEmpty ?? true) ||
+
+                    //         (date?.isEmpty ?? true)) {
+
+                    //       MyDialog(context: context).normalDialog(
+
+                    //           title: 'มีพื้นที่ว่าง ?',
+
+                    //           subTitle: 'กรุณาเติมทุกช่องว่าง');
+
+                    //     } else {
+
+                    //       CovidModel covidModel = CovidModel(
+
+                    //           name: name!, id: id!, date: date!);
+
+                    //       await FirebaseFirestore.instance
+
+                    //           .collection('covid')
+
+                    //           .doc()
+
+                    //           .set(covidModel.toMap())
+
+                    //           .then((value) {
+
+                    //         nameController.text = '';
+
+                    //         idController.text = '';
+
+                    //         dateController.text = '';
+
+                    //       });
+
+                    //     }
+
+                    //   },
+
+                    // ),
+
+                    // ShowButton(
+
+                    //   lable: 'อัพเดท',
+
+                    //   pressFunc: () async {
+
+                    //     if ((nameController.text.isEmpty) ||
+
+                    //         (idController.text.isEmpty) ||
+
+                    //         (dateController.text.isEmpty)) {
+
+                    //       MyDialog(context: context).normalDialog(
+
+                    //           title: 'มีพื้นที่ว่าง ?',
+
+                    //           subTitle: 'กรุณาเติมทุกช่องว่าง');
+
+                    //     } else {
+
+                    //       var appController;
+
+                    //       String docId = appController.docIdCovids[
+
+                    //           appController.indexUpdates.last];
+
+                    //       print('docId Updata---> $docId');
+
+                    //       CovidModel covidModel = CovidModel(
+
+                    //           name: nameController.text,
+
+                    //           id: idController.text,
+
+                    //           date: dateController.text);
+
+                    //       print(
+
+                    //           'covidModel Update ---> ${covidModel.toMap()}');
+
+                    //       await FirebaseFirestore.instance
+
+                    //           .collection('covid')
+
+                    //           .doc(docId)
+
+                    //           .update(covidModel.toMap())
+
+                    //           .then((value) {
+
+                    //         nameController.text = '';
+
+                    //         idController.text = '';
+
+                    //         dateController.text = '';
+
+                    //       });
+
+                    //     }
+
+                    //   },
+
+                    // ),
+                  ],
+                )
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

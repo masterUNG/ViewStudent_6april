@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:viewstudent/models/covid_model.dart';
 import 'package:viewstudent/models/model_5np1.dart';
 import 'package:viewstudent/models/post_model.dart';
@@ -9,13 +10,22 @@ import 'package:viewstudent/utility/app_controller.dart';
 class AppService {
   AppController appController = Get.put(AppController());
 
+  String timeToString({required Timestamp timestamp}) {
+    DateFormat dateFormat = DateFormat('dd MMM yyyy HH:mm');
+    DateTime dateTime = timestamp.toDate();
+    return dateFormat.format(dateTime);
+  }
+
   Future<void> read5np1Data() async {
     if (appController.model5np1s.isNotEmpty) {
       appController.model5np1s.clear();
     }
 
-    await FirebaseFirestore.instance.collection('5np1').orderBy('idStudent')
-    .get().then((value) {
+    await FirebaseFirestore.instance
+        .collection('5np1')
+        .orderBy('idStudent')
+        .get()
+        .then((value) {
       for (var element in value.docs) {
         Model5np1 model5np1 = Model5np1.fromMap(element.data());
         appController.model5np1s.add(model5np1);
