@@ -4,20 +4,21 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class PostModel {
-
   final String uidPost;
   final String namePost;
   final String urlPost;
   final String post;
   final Timestamp timestamp;
+  final String? urlImage;
+
   PostModel({
     required this.uidPost,
     required this.namePost,
     required this.urlPost,
     required this.post,
     required this.timestamp,
+    this.urlImage,
   });
-  
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -26,6 +27,7 @@ class PostModel {
       'urlPost': urlPost,
       'post': post,
       'timestamp': timestamp,
+      'urlImage': urlImage,
     };
   }
 
@@ -36,10 +38,14 @@ class PostModel {
       urlPost: (map['urlPost'] ?? '') as String,
       post: (map['post'] ?? '') as String,
       timestamp: (map['timestamp']),
+      urlImage: map['urlImage'] ?? '',
     );
   }
 
+  // timestamp: (map['timestamp']),
+
   String toJson() => json.encode(toMap());
 
-  factory PostModel.fromJson(String source) => PostModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory PostModel.fromJson(String source) =>
+      PostModel.fromMap(json.decode(source) as Map<String, dynamic>);
 }
